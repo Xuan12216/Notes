@@ -42,10 +42,16 @@ public class NotesListAdapter extends RecyclerView.Adapter<NotesViewHolder> {
         holder.textView_title.setText(list.get(position).getTitle());
         holder.textView_title.setSelected(true);
 
-        holder.textView_notes.setText(list.get(position).getNotes());
-
         holder.textView_date.setText(list.get(position).getDate());
         holder.textView_date.setSelected(true);
+
+        //holder.textView_notes.setText(list.get(position).getNotes());
+        String noteText = list.get(position).getNotes();
+
+        if(noteText.length() > 200){
+            noteText = noteText.substring(0,200) + "...";
+        }
+        holder.textView_notes.setText(noteText);
 
         if (list.get(position).isPinned()) {
             holder.imageView_pin.setImageResource(R.drawable.pin);

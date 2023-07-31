@@ -26,6 +26,6 @@ public interface MainDAO {
     @Query("UPDATE notes SET pinned = :pin WHERE ID = :id")
     void pin (int id,boolean pin);
 
-    @Query("SELECT * FROM notes ORDER BY id DESC")
+    @Query("SELECT * FROM notes ORDER BY CASE WHEN pinned = 1 THEN 0 ELSE 1 END, id DESC")
     List<Notes> getAll();
 }

@@ -4,6 +4,7 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.SearchView;
 import androidx.cardview.widget.CardView;
+import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.StaggeredGridLayoutManager;
@@ -14,6 +15,8 @@ import android.os.Bundle;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.PopupMenu;
 import android.widget.Switch;
 import android.widget.Toast;
@@ -34,6 +37,8 @@ public class MainActivity extends AppCompatActivity implements PopupMenu.OnMenuI
     FloatingActionButton fab_add;
     SearchView searchView_home;
     Notes selectedNote;
+    private String currentFilterText = "";
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,7 +47,21 @@ public class MainActivity extends AppCompatActivity implements PopupMenu.OnMenuI
 
         recyclerView = findViewById(R.id.recycler_home);
         fab_add = findViewById(R.id.fab_add);
+
         searchView_home = findViewById(R.id.searchView_home);
+
+        // 获取SearchView的EditText，设置输入文本的颜色，设置提示文本的颜色
+        EditText searchEditText = searchView_home.findViewById(androidx.appcompat.R.id.search_src_text);
+        searchEditText.setTextColor(getResources().getColor(R.color.white));
+        searchEditText.setHintTextColor(getResources().getColor(R.color.white));
+
+        //获取SearchView的Search Icon,並且set新的icon
+        ImageView searchIcon = searchView_home.findViewById(androidx.appcompat.R.id.search_mag_icon);
+        searchIcon.setImageResource(R.drawable.baseline_search_24);
+
+        //获取SearchView的Close Icon,並且set新的icon
+        ImageView closeIcon = searchView_home.findViewById(androidx.appcompat.R.id.search_close_btn);
+        closeIcon.setImageResource(R.drawable.baseline_close_24);
 
         database = RoomDB.getInstance(this);
         notes = database.mainDAO().getAll();
@@ -65,6 +84,7 @@ public class MainActivity extends AppCompatActivity implements PopupMenu.OnMenuI
 
             @Override
             public boolean onQueryTextChange(String newText) {
+                currentFilterText = newText;
                 filter(newText);
                 return true;
             }
@@ -92,7 +112,11 @@ public class MainActivity extends AppCompatActivity implements PopupMenu.OnMenuI
                 database.mainDAO().insert(new_notes);
                 notes.clear();
                 notes.addAll(database.mainDAO().getAll());
-                notesListAdapter.notifyDataSetChanged();
+                updateRecycler(notes);
+
+                if(!currentFilterText.isEmpty()){
+                    filter(currentFilterText);
+                }
             }
         }
         else if (requestCode == 102){
@@ -101,7 +125,11 @@ public class MainActivity extends AppCompatActivity implements PopupMenu.OnMenuI
                 database.mainDAO().update(new_notes.getID(),new_notes.getTitle(),new_notes.getNotes());
                 notes.clear();
                 notes.addAll(database.mainDAO().getAll());
-                notesListAdapter.notifyDataSetChanged();
+                updateRecycler(notes);
+
+                if(!currentFilterText.isEmpty()){
+                    filter(currentFilterText);
+                }
             }
         }
     }
@@ -148,17 +176,27 @@ public class MainActivity extends AppCompatActivity implements PopupMenu.OnMenuI
                 database.mainDAO().pin(selectedNote.getID(),true);
                 Toast.makeText(MainActivity.this,"Pinned!",Toast.LENGTH_SHORT).show();
             }
+
             notes.clear();
             notes.addAll(database.mainDAO().getAll());
             updateRecycler(notes);
+
+            if(!currentFilterText.isEmpty()){
+                filter(currentFilterText);
+            }
             return true;
         }
         else if (menuItem.getItemId() == R.id.delete){
             database.mainDAO().delete(selectedNote);
+
             notes.clear();
             notes.addAll(database.mainDAO().getAll());
             updateRecycler(notes);
             Toast.makeText(MainActivity.this,"Note Deleted!",Toast.LENGTH_SHORT).show();
+
+            if(!currentFilterText.isEmpty()){
+                filter(currentFilterText);
+            }
             return true;
         }
         return false;
