@@ -11,13 +11,14 @@ import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.example.notes.Models.Notes;
+import com.google.android.material.textfield.TextInputEditText;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
 public class NotesTakerActivity extends AppCompatActivity {
     EditText editText_title,editText_notes;
-    ImageView imageView_save;
+    ImageView imageView_save,imageView_back;
     Notes notes;
     boolean isOldNote = false;
 
@@ -29,6 +30,7 @@ public class NotesTakerActivity extends AppCompatActivity {
         editText_title = findViewById(R.id.editText_title);
         editText_notes = findViewById(R.id.editText_notes);
         imageView_save = findViewById(R.id.imageView_save);
+        imageView_back = findViewById(R.id.backButton);
 
         notes = new Notes();
 
@@ -41,6 +43,12 @@ public class NotesTakerActivity extends AppCompatActivity {
             e.printStackTrace();
         }
 
+        imageView_back.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                finish();
+            }
+        });
         imageView_save.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

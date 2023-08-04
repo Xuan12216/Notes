@@ -9,7 +9,7 @@
 
     <style name="Theme.NotesApp.NoActionBar" parent="Theme.Material3.DayNight.NoActionBar">
         <!-- Primary brand color. -->
-        <item name="colorPrimary">@color/white</item>
+        <item name="colorPrimary">@color/material_on_background_disabled</item>
         <!-- Secondary brand color. -->
         <item name="colorSecondary">@color/white</item>
         <!-- Status bar color. -->
